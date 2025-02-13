@@ -10,19 +10,53 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold (
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        //Icono izquierdo
+        //Ícono izquierdo
         leading: Icon(
-          Icons.menu,
-          color: Colors.grey[800]
+        Icons.menu,
+        color: Colors.grey[800]
+        ),
+      actions: const [ 
+        Padding(
+          padding: EdgeInsets.only(right: 24.0),
+          child: Icon(Icons.person),
+        )
+        ],
+      ),
+      body:const Column(
+        children: [
+          //Texto principal
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal:36, vertical:18),
+            child: Row(
+              children: [
+                Text(
+                  "I want to ",
+                  style: TextStyle(fontSize:32), 
+                ),
+                Text ("Eat",
+                  style: TextStyle(
+                    //Tamaño de letra
+                    fontSize: 32,
+                    //Negritas
+                    fontWeight: FontWeight.bold,
+                    //Subrayado
+                    decoration: TextDecoration.underline))
+              
+              ],
+            ),
           ),
-          //icono Derecho
-          actions: [
-            Icon(Icons.person)
-          ],
-      )
+      
+          //Pestañas (TabBar)
+
+          //Contenido de pestañas (TabBarView)
+
+          //Carrito (Cart)
+
+        
+        ],)
     );
   }
 }
