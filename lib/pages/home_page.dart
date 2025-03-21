@@ -3,6 +3,7 @@ import 'package:donutapp/tabs/donut_tab.dart';
 import 'package:donutapp/tabs/pancakes_tab.dart';
 import 'package:donutapp/tabs/pizza_tab.dart';
 import 'package:donutapp/tabs/smoothie_tab.dart';
+import 'package:donutapp/utils/car_items.dart';
 import 'package:donutapp/utils/my_tab.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +23,45 @@ class _HomePageState extends State<HomePage> {
     const MyTab(iconPath: 'lib/icons/pizza.png'),
   ];
 
+  List<CartItem> cartItems = []; // Lista de productos en el carrito
+
+  // Función para agregar productos al carrito
+  void addToCart(String name, double price) {
+    setState(() {
+      bool itemExists = false;
+      // Verificar si el producto ya está en el carrito
+      for (var item in cartItems) {
+        if (item.name == name) {
+          item.quantity++; // Si ya existe, solo incrementamos la cantidad
+          itemExists = true;
+          break;
+        }
+      }
+      if (!itemExists) {
+        cartItems.add(
+            CartItem(name: name, price: price)); // Si no existe, lo agregamos
+      }
+    });
+  }
+
+  // Obtener el total del carrito
+  double get totalAmount {
+    double total = 0;
+    for (var item in cartItems) {
+      total += item.totalPrice;
+    }
+    return total;
+  }
+
+  // Obtener la cantidad total de items en el carrito
+  int get itemCount {
+    int count = 0;
+    for (var item in cartItems) {
+      count += item.quantity;
+    }
+    return count;
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -29,13 +69,12 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          //icono izquierdo
           leading: Icon(Icons.menu, color: Colors.grey[800]),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 24.0),
               child: Icon(Icons.person),
-            )
+            ),
           ],
         ),
         body: Column(
@@ -51,11 +90,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Text('Eat',
                       style: TextStyle(
-                          //Tamaño de letras
                           fontSize: 32,
-                          //Negritas
                           fontWeight: FontWeight.bold,
-                          //Subrayado
                           decoration: TextDecoration.underline))
                 ],
               ),
@@ -63,32 +99,35 @@ class _HomePageState extends State<HomePage> {
 
             //Pestañas(TabBar)
             TabBar(tabs: myTabs),
-            //Contenido de pestañas(TapBarView)
+            //Contenido de pestañas(TabBarView)
             Expanded(
-              child: TabBarView(children: [
-                DonutTab(),
-                BurgerTab(),
-                SmoothieTab(),
-                PancakesTab(),
-                PizzaTab()
-              ]),
+              child: TabBarView(
+                children: [
+                  DonutTab(
+                      addToCart:
+                          addToCart), // Pasamos la función a las pestañas
+                  BurgerTab(addToCart: addToCart),
+                  SmoothieTab(addToCart: addToCart),
+                  PancakesTab(addToCart: addToCart),
+                  PizzaTab(addToCart: addToCart),
+                ],
+              ),
             ),
-            //Carrito (cart)
+            //Cart Section
             Container(
               color: Colors.white,
               padding: EdgeInsets.all(16),
               child: Row(
-                //Esto alinea los elementos a los extremos
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
                     child: Column(
-                      //Alinear horizontalmente una columna
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Mostrar número de items y total
                         Text(
-                          "2 Items | \$45",
+                          "$itemCount Items | \$${totalAmount.toStringAsFixed(2)}",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -99,21 +138,25 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   ElevatedButton(
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.pink,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 12)),
-                      onPressed: () {},
                       child: Row(
                         children: [
-                          Icon(Icons.shopping_cart, color: Colors.white),
+                          Icon(
+                            Icons.shopping_cart_outlined,
+                            color: Colors.white,
+                          ),
                           SizedBox(
                             width: 10,
                           ),
-                          const Text(
+                          Text(
                             "View Cart",
                             style: TextStyle(
-                                color: Colors.white, fontWeight: FontWeight.bold),
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ))
